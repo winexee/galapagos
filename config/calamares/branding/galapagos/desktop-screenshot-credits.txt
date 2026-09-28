@@ -1,0 +1,18 @@
+Galapagos Linux - Calamares masaüstü önizleme görselleri
+
+Cinnamon:
+Ubuntu Cinnamon 26.04 LTS default desktop - English
+Kaynak:
+https://commons.wikimedia.org/wiki/File:Ubuntu_Cinnamon_26.04_LTS_default_desktop_-_English.png
+
+KDE Plasma:
+Kde Plasma 6
+Kaynak:
+https://commons.wikimedia.org/wiki/File:Kde_Plasma_6.png
+
+GNOME:
+Ubuntu 26.04 LTS desktop
+Kaynak:
+https://commons.wikimedia.org/wiki/File:Ubuntu_26.04_LTS_desktop.png
+
+Görseller, ilgili Wikimedia Commons dosya sayfalarında belirtilen özgür yazılım / özgür lisans koşullarına tabidir.

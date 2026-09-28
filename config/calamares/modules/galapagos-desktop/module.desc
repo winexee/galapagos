@@ -1,0 +1,6 @@
+---
+type: job
+name: galapagos-desktop
+interface: python
+script: main.py
+noconfig: true

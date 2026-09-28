@@ -1,0 +1,40 @@
+#!/bin/sh
+
+set -u
+
+LIVE_MARKER="/cdrom/casper/filesystem.squashfs"
+LOG="/tmp/galapagos-calamares.log"
+
+# Kurulu sistemde veya normal "Dene" oturumunda çalışmasın.
+if [ ! -f "$LIVE_MARKER" ]; then
+    exit 0
+fi
+
+# Sadece:
+#   1) GRUB'dan "Kur" seçildiğinde
+#   2) Masaüstü kurulum kısayolundan elle çağrıldığında
+# çalışır.
+CMDLINE="$(cat /proc/cmdline 2>/dev/null || true)"
+MANUAL="${GALAPAGOS_MANUAL_INSTALL:-0}"
+
+case "$MANUAL:$CMDLINE" in
+    1:*)
+        ;;
+    0:*'galapagos.install=1'*)
+        ;;
+    *)
+        exit 0
+        ;;
+esac
+
+if pgrep -x calamares >/dev/null 2>&1; then
+    exit 0
+fi
+
+echo "==================================================" >> "$LOG"
+echo "GALAPAGOS CALAMARES BAŞLATILIYOR" >> "$LOG"
+date >> "$LOG"
+echo "==================================================" >> "$LOG"
+
+exec pkexec /usr/bin/calamares \
+    -c /etc/calamares

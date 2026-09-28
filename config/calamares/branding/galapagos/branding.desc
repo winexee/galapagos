@@ -1,0 +1,35 @@
+---
+componentName: galapagos
+
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+
+windowExpanding: normal
+windowSize: 1100px,720px
+windowPlacement: center
+
+sidebar: qml,left
+navigation: qml,bottom
+
+strings:
+    productName: "Galapagos Linux"
+    shortProductName: "Galapagos"
+    version: "26.04 LTS"
+    shortVersion: "26.04"
+    versionedName: "Galapagos Linux 26.04 LTS"
+    shortVersionedName: "Galapagos Linux 26.04 LTS"
+    bootloaderEntryName: "Galapagos Linux"
+
+images:
+    productIcon: "icon.png"
+    productLogo: "icon.png"
+    productWelcome: "logo.png"
+
+style:
+    SidebarBackground: "#102A3A"
+    SidebarText: "#DCECF4"
+    SidebarTextCurrent: "#102A3A"
+    SidebarBackgroundCurrent: "#42BFE8"
+
+slideshow: "show.qml"
+slideshowAPI: 2

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="630">
+<defs>
+<linearGradient id="b" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#123448"/>
+<stop offset="1" stop-color="#27739B"/>
+</linearGradient>
+</defs>
+<rect width="920" height="630" fill="url(#b)"/>
+<text x="460" y="255" text-anchor="middle"
+ fill="#FFFFFF" font-family="sans-serif"
+ font-size="38" font-weight="700">
+Son ayarlar tamamlanıyor
+</text>
+<text x="460" y="315" text-anchor="middle"
+ fill="#E0EFF6" font-family="sans-serif"
+ font-size="21">
+Galapagos Linux kullanıma hazırlanıyor
+</text>
+<text x="460" y="410" text-anchor="middle"
+ fill="#FFFFFF" font-family="sans-serif"
+ font-size="24">
+Birazdan sisteminiz hazır olacak.
+</text>
+</svg>

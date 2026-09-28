@@ -1,0 +1,193 @@
+/* ==========================================================
+   GALAPAGOS LINUX — CALAMARES UI
+   ========================================================== */
+
+/* Ana pencere */
+QWidget#mainApp {
+    background: #F4F8FB;
+}
+
+/* Sol panel */
+QWidget#sidebarApp {
+    background: #102A3A;
+    border: none;
+}
+
+/* Logo alanı */
+QLabel#logoApp {
+    background: #102A3A;
+    padding: 18px;
+}
+
+/* Sol menü */
+ProgressTreeView#sidebarMenuApp {
+    background: #102A3A;
+    border: none;
+    color: #DCECF4;
+    padding: 12px 8px;
+    outline: none;
+}
+
+/* Sol menü seçili öğe */
+ProgressTreeView#sidebarMenuApp::item {
+    min-height: 42px;
+    padding: 9px 12px;
+    margin: 3px 6px;
+    border-radius: 10px;
+}
+
+ProgressTreeView#sidebarMenuApp::item:selected {
+    background: #42BFE8;
+    color: #102A3A;
+    font-weight: 700;
+}
+
+/* İçerik */
+QWidget#viewManager {
+    background: #F4F8FB;
+}
+
+QStackedWidget#viewManagerStack {
+    background: #FFFFFF;
+}
+
+/* Sayfa başlıkları */
+QLabel {
+    selection-background-color: #42BFE8;
+    selection-color: #102A3A;
+}
+
+/* Genel buton */
+QPushButton {
+    min-height: 40px;
+    padding: 7px 18px;
+    border-radius: 9px;
+    border: 1px solid #C9D8E2;
+    background: #FFFFFF;
+    color: #173042;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background: #EAF7FC;
+    border-color: #42BFE8;
+}
+
+QPushButton:pressed {
+    background: #D8F1FA;
+}
+
+/* İleri butonu */
+QPushButton#view-button-next {
+    background: #1976A8;
+    color: #FFFFFF;
+    border: none;
+    min-width: 125px;
+}
+
+QPushButton#view-button-next:hover {
+    background: #2191C7;
+}
+
+/* Geri */
+QPushButton#view-button-back {
+    background: #FFFFFF;
+    color: #173042;
+    min-width: 105px;
+}
+
+/* İptal */
+QPushButton#view-button-cancel {
+    background: #FFFFFF;
+    color: #526976;
+}
+
+/* Giriş alanları */
+QLineEdit,
+QTextEdit,
+QPlainTextEdit,
+QComboBox,
+QSpinBox,
+QDoubleSpinBox {
+    min-height: 38px;
+    border: 1px solid #C9D8E2;
+    border-radius: 8px;
+    padding: 5px 10px;
+    background: #FFFFFF;
+    color: #173042;
+}
+
+QLineEdit:focus,
+QTextEdit:focus,
+QPlainTextEdit:focus,
+QComboBox:focus,
+QSpinBox:focus,
+QDoubleSpinBox:focus {
+    border: 2px solid #42BFE8;
+}
+
+/* Açılır kutular */
+QComboBox QAbstractItemView {
+    background: #FFFFFF;
+    color: #173042;
+    border: 1px solid #C9D8E2;
+    selection-background-color: #DFF5FC;
+    selection-color: #102A3A;
+}
+
+/* Kontrol kutuları */
+QCheckBox,
+QRadioButton {
+    spacing: 8px;
+}
+
+/* Kaydırma çubukları */
+QScrollBar:vertical {
+    width: 10px;
+    background: #EEF4F7;
+    margin: 2px;
+}
+
+QScrollBar::handle:vertical {
+    background: #A7C6D3;
+    border-radius: 5px;
+    min-height: 35px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #42BFE8;
+}
+
+/* Gruplar / çerçeveler */
+QGroupBox {
+    border: 1px solid #D7E3E9;
+    border-radius: 12px;
+    margin-top: 12px;
+    padding-top: 12px;
+    background: #FFFFFF;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 14px;
+    padding: 0 6px;
+    color: #173042;
+    font-weight: 700;
+}
+
+/* Finished sayfasındaki zorunlu restart checkbox'ı
+   kullanıcıya seçenek olarak gösterilmesin. */
+QCheckBox#restartCheckBox {
+    min-height: 0px;
+    max-height: 0px;
+    height: 0px;
+    padding: 0px;
+    margin: 0px;
+    spacing: 0px;
+    color: transparent;
+}
+
+QCheckBox#restartCheckBox::indicator {
+    width: 0px;
+    height: 0px;
+}

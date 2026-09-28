@@ -1,0 +1,39 @@
+# ============================================================
+# Galapagos Linux - Generated / Build / Test Files
+# ============================================================
+
+# Build outputs
+/build/
+/iso/
+
+# Generated filesystem trees
+/custom-root/
+/custom-live/
+/custom-disk/
+/rootfs/
+/rootfs-cinnamon-test/
+
+# Test artifacts
+/test-boot/
+*.img
+*.qcow2
+
+# Backups
+/backup-*/
+
+# Temporary / lock files
+.#*
+*.lck
+
+# Downloaded binary packages
+*.deb
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Temporary files
+/tmp/

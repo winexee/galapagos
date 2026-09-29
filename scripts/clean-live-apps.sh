@@ -42,7 +42,7 @@ if [ "${#installed[@]}" -eq 0 ]; then
 else
     printf '[BİLGİ] Kaldırılacak paketler:\n'
     printf '  - %s\n' "${installed[@]}"
-    apt-get purge -y "${installed[@]}"
+    DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Use-Pty=0 purge -y "${installed[@]}"
 fi
 
 # Remove stale user-level menu caches from the live account.
@@ -52,7 +52,7 @@ if [ -d /home/vboxuser ]; then
     chown -R 1000:1000 /home/vboxuser/.cache /home/vboxuser/.config 2>/dev/null || true
 fi
 
-if command -v update-desktop-database >/dev/null 2>&1; then
+# YAD installs a developer-oriented "Icon Browser" launcher; keep YAD unavailable\n# from the live application menu without removing the underlying utility.\nYAD_ICON_DESKTOP="/usr/share/applications/yad-icon-browser.desktop"\nif [ -f "$YAD_ICON_DESKTOP" ]; then\n    rm -f "$YAD_ICON_DESKTOP"\nfi\n\nif command -v update-desktop-database >/dev/null 2>&1; then
     update-desktop-database /usr/share/applications >/dev/null 2>&1 || true
 fi
 

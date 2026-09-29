@@ -42,7 +42,7 @@ sudo cp "$ROOT/boot/$INITRD_FILE" "$STAGING/casper/initrd"
 sudo rm -f "$STAGING/casper/filesystem.squashfs"
 sudo mksquashfs "$ROOT" "$STAGING/casper/filesystem.squashfs" -comp xz -b 1M -noappend -wildcards
 
-sudo chroot "$ROOT" dpkg-query -W -f="${binary:Package} ${Version}\n" | sort | sudo tee "$STAGING/casper/filesystem.manifest" >/dev/null
+sudo chroot "$ROOT" dpkg-query -W -f='${binary:Package} ${Version}\n' | sort | sudo tee "$STAGING/casper/filesystem.manifest" >/dev/null
 sudo du -sx --block-size=1 "$ROOT" | awk '{print $1}' | sudo tee "$STAGING/casper/filesystem.size" >/dev/null
 
 sudo cp custom-disk/boot/grub/grub.cfg "$STAGING/boot/grub/grub.cfg"

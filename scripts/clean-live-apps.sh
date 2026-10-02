@@ -52,8 +52,16 @@ if [ -d /home/vboxuser ]; then
     chown -R 1000:1000 /home/vboxuser/.cache /home/vboxuser/.config 2>/dev/null || true
 fi
 
-# YAD installs a developer-oriented "Icon Browser" launcher; keep YAD unavailable\n# from the live application menu without removing the underlying utility.\nYAD_ICON_DESKTOP="/usr/share/applications/yad-icon-browser.desktop"\nif [ -f "$YAD_ICON_DESKTOP" ]; then\n    rm -f "$YAD_ICON_DESKTOP"\nfi\n\nif command -v update-desktop-database >/dev/null 2>&1; then
-    update-desktop-database /usr/share/applications >/dev/null 2>&1 || true
-fi
-
-echo "[OK] Live uygulama temizliği tamamlandı."
+# Remove developer-oriented launchers from the live application menu.
+for desktop_file in \
+    /usr/share/applications/yad-icon-browser.desktop \
+    /usr/share/applications/kate.desktop \
+    /usr/share/applications/konsole.desktop \
+    /usr/share/applications/gwenview.desktop \
+    /usr/share/applications/dolphin.desktop \
+    /usr/share/applications/ark.desktop \
+    /usr/share/applications/spectacle.desktop \
+    /usr/share/applications/systemsettings.desktop
+do
+    rm -f "$desktop_file"
+done

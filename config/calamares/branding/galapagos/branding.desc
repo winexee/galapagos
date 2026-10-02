@@ -21,9 +21,9 @@ strings:
     bootloaderEntryName: "Galapagos Linux"
 
 images:
-    productIcon: "icon.png"
-    productLogo: "icon.png"
-    productWelcome: "logo.png"
+    productIcon: "logo.svg"
+    productLogo: "logo.svg"
+    productWelcome: "logo.svg"
 
 style:
     SidebarBackground: "#102A3A"

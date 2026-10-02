@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# Prepare the live Cinnamon environment. Desktop-specific packages selected
-# later in Calamares are not affected by this live-session cleanup.
-
 if [ "$(id -u)" -ne 0 ]; then
     echo "[HATA] Bu script root olarak çalıştırılmalı."
     echo "Örnek: sudo chroot build/live-root /usr/local/sbin/galapagos-clean-live-apps"
+    exit 1
+fi
+
+if [ ! -f /etc/calamares/settings.conf ] || ! grep -q '^branding:[[:space:]]*galapagos$' /etc/calamares/settings.conf 2>/dev/null; then
+    echo "[HATA] /etc/calamares/settings.conf içinde Galapagos branding doğrulanamadı."
+    echo "[HATA] Güvenlik için cleanup işlemi durduruldu."
     exit 1
 fi
 
@@ -26,11 +29,34 @@ REMOVE_PACKAGES=(
     gtk-4-examples
 )
 
-installed=()
+remove_desktop_file_if_present() {
+    local desktop_file="$1"
 
+    if [ -f "$desktop_file" ]; then
+        rm -f -- "$desktop_file"
+    fi
+}
+
+detect_live_home() {
+    local candidate user
+
+    for candidate in /home/*; do
+        [ -d "$candidate" ] || continue
+        user="${candidate##*/}"
+
+        if id -u "$user" >/dev/null 2>&1; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+installed=()
 for pkg in "${REMOVE_PACKAGES[@]}"; do
-    if dpkg-query -W -f='${db:Status-Status}\n' "${pkg}" 2>/dev/null | grep -qx installed; then
-        installed+=( "${pkg}" )
+    if dpkg-query -W -f='${db:Status-Status}\n' "$pkg" 2>/dev/null | grep -qx installed; then
+        installed+=("$pkg")
     fi
 done
 
@@ -44,7 +70,6 @@ else
     DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Use-Pty=0 purge -y "${installed[@]}"
 fi
 
-# Remove known developer-oriented launchers.
 for desktop_file in \
     /usr/share/applications/yad-icon-browser.desktop \
     /usr/share/applications/kate.desktop \
@@ -55,10 +80,9 @@ for desktop_file in \
     /usr/share/applications/spectacle.desktop \
     /usr/share/applications/systemsettings.desktop
 do
-    rm -f "$desktop_file"
+    remove_desktop_file_if_present "$desktop_file"
 done
 
-# Remove any remaining launcher whose visible name is "Icon Browser".
 ICON_BROWSER_LIST="$(mktemp)"
 grep -ril --include='*.desktop' \
     -e '^Name[[:space:]]*=[[:space:]]*Icon Browser[[:space:]]*$' \
@@ -66,33 +90,35 @@ grep -ril --include='*.desktop' \
     /usr/share/applications 2>/dev/null > "$ICON_BROWSER_LIST" || true
 
 while IFS= read -r desktop_file; do
-    [ -n "$desktop_file" ] && rm -f "$desktop_file"
+    [ -n "$desktop_file" ] && remove_desktop_file_if_present "$desktop_file"
 done < "$ICON_BROWSER_LIST"
 
-rm -f "$ICON_BROWSER_LIST"
+rm -f -- "$ICON_BROWSER_LIST"
 
-# Remove stale Cinnamon menu caches.
-if [ -d /home/vboxuser ]; then
-    rm -rf /home/vboxuser/.cache/menus
-    rm -f /home/vboxuser/.config/menus/*.menu 2>/dev/null || true
+LIVE_HOME=""
+LIVE_USER=""
+LIVE_UID=""
+LIVE_GID=""
+
+if LIVE_HOME="$(detect_live_home)"; then
+    LIVE_USER="${LIVE_HOME##*/}"
+    LIVE_UID="$(id -u "$LIVE_USER")"
+    LIVE_GID="$(id -g "$LIVE_USER")"
+
+    rm -rf -- "$LIVE_HOME/.cache/menus"
+    rm -f -- "$LIVE_HOME"/.config/menus/*.menu 2>/dev/null || true
 fi
 
-# Use the Galapagos logo for the live user's account avatar.
-# The live account is created by the image/session setup, so do not depend on
-# NSS/getent inside the chroot. The prepared live home is /home/vboxuser.
 AVATAR_SOURCE="/etc/calamares/branding/galapagos/logo.svg"
 if [ ! -f "$AVATAR_SOURCE" ] && [ -f /usr/share/icons/hicolor/scalable/apps/galapagos-installer.svg ]; then
     AVATAR_SOURCE="/usr/share/icons/hicolor/scalable/apps/galapagos-installer.svg"
 fi
 
-LIVE_USER="vboxuser"
-LIVE_HOME="/home/vboxuser"
-
-if [ -f "$AVATAR_SOURCE" ] && [ -d "$LIVE_HOME" ]; then
+if [ -n "$LIVE_USER" ] && [ -f "$AVATAR_SOURCE" ] && [ -d "$LIVE_HOME" ]; then
     mkdir -p /var/lib/AccountsService/icons /var/lib/AccountsService/users
 
-    ACCOUNT_ICON="/var/lib/AccountsService/icons/$LIVE_USER.svg"
-    ACCOUNT_FILE="/var/lib/AccountsService/users/$LIVE_USER"
+    ACCOUNT_ICON="/var/lib/AccountsService/icons/${LIVE_USER}.svg"
+    ACCOUNT_FILE="/var/lib/AccountsService/users/${LIVE_USER}"
 
     cp -f "$AVATAR_SOURCE" "$ACCOUNT_ICON"
 
@@ -107,13 +133,41 @@ if [ -f "$AVATAR_SOURCE" ] && [ -d "$LIVE_HOME" ]; then
     fi
 
     cp -f "$AVATAR_SOURCE" "$LIVE_HOME/.face"
-    chown 1000:1000 "$ACCOUNT_ICON" "$ACCOUNT_FILE" "$LIVE_HOME/.face" 2>/dev/null || true
+    chown "$LIVE_UID:$LIVE_GID" "$ACCOUNT_ICON" "$ACCOUNT_FILE" "$LIVE_HOME/.face" 2>/dev/null || true
 
     echo "[OK] Galapagos kullanıcı avatarı hazır."
 else
     echo "[UYARI] Galapagos avatarı hazırlanamadı."
     echo "[BİLGİ] Kaynak: $AVATAR_SOURCE"
-    echo "[BİLGİ] Ev dizini: $LIVE_HOME"
+    echo "[BİLGİ] Ev dizini: ${LIVE_HOME:-bulunamadı}"
+fi
+
+icon_browser_problem=0
+
+if grep -Ril --include='*.desktop' \
+    -e '^Name[[:space:]]*=[[:space:]]*Icon Browser[[:space:]]*$' \
+    -e '^Name\[[^]]*\][[:space:]]*=[[:space:]]*Icon Browser[[:space:]]*$' \
+    /usr/share/applications >/dev/null 2>&1; then
+    echo "[HATA] Icon Browser launcher dosyası hâlâ mevcut."
+    icon_browser_problem=1
+fi
+
+for binary in gtk3-icon-browser gtk4-icon-browser yad-icon-browser; do
+    if command -v "$binary" >/dev/null 2>&1; then
+        echo "[HATA] Icon Browser ilişkili binary hâlâ mevcut: $binary"
+        icon_browser_problem=1
+    fi
+done
+
+for pkg in gtk-3-examples gtk-4-examples yad; do
+    if dpkg-query -W -f='${db:Status-Status}\n' "$pkg" 2>/dev/null | grep -qx installed; then
+        echo "[HATA] Icon Browser ilişkili paket hâlâ kurulu: $pkg"
+        icon_browser_problem=1
+    fi
+done
+
+if [ "$icon_browser_problem" -ne 0 ]; then
+    exit 1
 fi
 
 if command -v update-desktop-database >/dev/null 2>&1; then

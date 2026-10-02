@@ -174,20 +174,3 @@ QGroupBox::title {
     color: #173042;
     font-weight: 700;
 }
-
-/* Finished sayfasındaki zorunlu restart checkbox'ı
-   kullanıcıya seçenek olarak gösterilmesin. */
-QCheckBox#restartCheckBox {
-    min-height: 0px;
-    max-height: 0px;
-    height: 0px;
-    padding: 0px;
-    margin: 0px;
-    spacing: 0px;
-    color: transparent;
-}
-
-QCheckBox#restartCheckBox::indicator {
-    width: 0px;
-    height: 0px;
-}

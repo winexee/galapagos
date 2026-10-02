@@ -80,7 +80,7 @@ DESKTOPS = {
     },
 
     "gnome": {
-        "display_manager": "gdm",
+        "display_manager": "gdm3",
         "remove": [
             "cinnamon-core",
             "cinnamon-session",
@@ -169,6 +169,10 @@ def run():
 
     # Calamares displaymanager modülünün kullanacağı seçili DM.
     gs.insert(
+        "displaymanagers",
+        [desktop["display_manager"]]
+    )
+    gs.insert(
         "displayManagers",
         [desktop["display_manager"]]
     )
@@ -180,7 +184,7 @@ def run():
     )
 
     libcalamares.utils.debug(
-        "Galapagos Desktop: displayManagers = {!r}".format(
+        "Galapagos Desktop: displaymanagers = {!r}".format(
             [desktop["display_manager"]]
         )
     )

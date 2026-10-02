@@ -82,7 +82,7 @@ Rectangle {
             Layout.preferredHeight: 42
 
             enabled: ViewManager.nextEnabled
-            visible: ViewManager.backAndNextVisible
+            visible: ViewManager.backAndNextVisible && !ViewManager.quitVisible
 
             text: "İleri  →"
 
@@ -119,11 +119,11 @@ Rectangle {
             enabled: ViewManager.quitEnabled
             visible: ViewManager.quitVisible
 
-            text: "İptal"
+            text: ViewManager.quitVisible ? "Yeniden Başlat" : "İptal"
 
             contentItem: Text {
                 text: cancelButton.text
-                color: "#607783"
+                color: cancelButton.enabled ? "#173042" : "#9AAAB2"
                 font.pixelSize: 12
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter

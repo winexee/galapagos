@@ -1,0 +1,18 @@
+#!/bin/sh
+set -u
+
+# Only affect the live "Try Galapagos" session.
+if [ ! -f /cdrom/casper/filesystem.squashfs ]; then
+    exit 0
+fi
+
+WALLPAPER="/usr/share/backgrounds/galapagos/galapagos-wallpaper.svg"
+
+if command -v gsettings >/dev/null 2>&1 && [ -f "$WALLPAPER" ]; then
+    gsettings set org.cinnamon.desktop.background picture-uri "file://$WALLPAPER" || true
+    gsettings set org.cinnamon.desktop.background picture-uri-dark "file://$WALLPAPER" || true
+    gsettings set org.cinnamon.desktop.background picture-options "zoom" || true
+fi
+
+# Make sure the old Debian live wallpaper is not selected by Cinnamon.
+exit 0

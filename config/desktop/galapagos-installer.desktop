@@ -11,8 +11,8 @@ GenericName[tr]=Sistem Kurucusu
 Comment=Galapagos Linux kurulum programını başlat
 Comment[tr]=Galapagos Linux kurulum programını başlat
 
-Exec=env GALAPAGOS_MANUAL_INSTALL=1 /usr/local/bin/galapagos-live-installer
-Icon=/etc/calamares/branding/galapagos/icon.png
+Exec=/usr/local/bin/galapagos-live-installer --manual
+Icon=galapagos-installer
 
 Terminal=false
 StartupNotify=true

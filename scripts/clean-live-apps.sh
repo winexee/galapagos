@@ -76,30 +76,33 @@ if [ -d /home/vboxuser ]; then
     rm -f /home/vboxuser/.config/menus/*.menu 2>/dev/null || true
 fi
 
-# Give the live user the Galapagos logo instead of the distro default
-# account picture. AccountsService and .face provide cross-desktop fallbacks.
-AVATAR_SOURCE="/etc/calamares/branding/galapagos/logo.svg"
-ACCOUNT_ICON="/var/lib/AccountsService/icons/vboxuser.svg"
-ACCOUNT_FILE="/var/lib/AccountsService/users/vboxuser"
+# Give the live user the Galapagos logo instead of the distro default account picture.
+AVATAR_SOURCE="/etc/calamares/branding/galapagos/icon.png"
+LIVE_UID=1000
+LIVE_USER="$(getent passwd "$LIVE_UID" | cut -d: -f1 || true)"
+LIVE_HOME="$(getent passwd "$LIVE_UID" | cut -d: -f6 || true)"
 
-if [ -f "$AVATAR_SOURCE" ]; then
+if [ -n "$LIVE_USER" ] && [ -n "$LIVE_HOME" ] && [ -f "$AVATAR_SOURCE" ]; then
     mkdir -p /var/lib/AccountsService/icons /var/lib/AccountsService/users
+
+    ACCOUNT_ICON="/var/lib/AccountsService/icons/$LIVE_USER.png"
+    ACCOUNT_FILE="/var/lib/AccountsService/users/$LIVE_USER"
+
     cp -f "$AVATAR_SOURCE" "$ACCOUNT_ICON"
+    chown "$LIVE_UID:$(id -gn "$LIVE_UID")" "$ACCOUNT_ICON" 2>/dev/null || true
 
     if [ -f "$ACCOUNT_FILE" ]; then
         if grep -q '^Icon=' "$ACCOUNT_FILE"; then
             sed -i "s|^Icon=.*$|Icon=$ACCOUNT_ICON|" "$ACCOUNT_FILE"
         else
-            printf '\\nIcon=%s\\n' "$ACCOUNT_ICON" >> "$ACCOUNT_FILE"
+            printf '\nIcon=%s\n' "$ACCOUNT_ICON" >> "$ACCOUNT_FILE"
         fi
     else
-        printf '[User]\\nIcon=%s\\n' "$ACCOUNT_ICON" > "$ACCOUNT_FILE"
+        printf '[User]\nIcon=%s\n' "$ACCOUNT_ICON" > "$ACCOUNT_FILE"
     fi
 
-    if [ -d /home/vboxuser ]; then
-        cp -f "$AVATAR_SOURCE" /home/vboxuser/.face
-        chown 1000:1000 /home/vboxuser/.face
-    fi
+    cp -f "$AVATAR_SOURCE" "$LIVE_HOME/.face"
+    chown "$LIVE_UID:$(id -gn "$LIVE_UID")" "$LIVE_HOME/.face" 2>/dev/null || true
 fi
 
 if command -v update-desktop-database >/dev/null 2>&1; then

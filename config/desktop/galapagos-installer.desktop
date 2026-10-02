@@ -12,7 +12,7 @@ Comment=Galapagos Linux kurulum programını başlat
 Comment[tr]=Galapagos Linux kurulum programını başlat
 
 Exec=/usr/local/bin/galapagos-live-installer --manual
-Icon=galapagos-installer
+Icon=/usr/share/icons/hicolor/scalable/apps/galapagos-installer.svg
 
 Terminal=false
 StartupNotify=true

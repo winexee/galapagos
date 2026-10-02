@@ -58,17 +58,18 @@ do
     rm -f "$desktop_file"
 done
 
-# Remove any remaining launcher whose visible name is exactly "Icon Browser".
-if [ -d /usr/share/applications ]; then
-    while IFS= read -r -d '' desktop_file; do
-        rm -f "$desktop_file"
-    done < <(
-        grep -rilz --include='*.desktop' \
-            -e '^Name[[:space:]]*=[[:space:]]*Icon Browser[[:space:]]*$' \
-            -e '^Name\[[^]]*\][[:space:]]*=[[:space:]]*Icon Browser[[:space:]]*$' \
-            /usr/share/applications 2>/dev/null || true
-    )
-fi
+# Remove any remaining launcher whose visible name is "Icon Browser".
+ICON_BROWSER_LIST="$(mktemp)"
+grep -ril --include='*.desktop' \
+    -e '^Name[[:space:]]*=[[:space:]]*Icon Browser[[:space:]]*$' \
+    -e '^Name\[[^]]*\][[:space:]]*=[[:space:]]*Icon Browser[[:space:]]*$' \
+    /usr/share/applications 2>/dev/null > "$ICON_BROWSER_LIST" || true
+
+while IFS= read -r desktop_file; do
+    [ -n "$desktop_file" ] && rm -f "$desktop_file"
+done < "$ICON_BROWSER_LIST"
+
+rm -f "$ICON_BROWSER_LIST"
 
 # Remove stale Cinnamon menu caches.
 if [ -d /home/vboxuser ]; then
@@ -76,7 +77,7 @@ if [ -d /home/vboxuser ]; then
     rm -f /home/vboxuser/.config/menus/*.menu 2>/dev/null || true
 fi
 
-# Give the live user the Galapagos logo instead of the distro default account picture.
+# Use the Galapagos icon for the live user's account avatar.
 AVATAR_SOURCE="/etc/calamares/branding/galapagos/icon.png"
 LIVE_UID=1000
 LIVE_USER="$(getent passwd "$LIVE_UID" | cut -d: -f1 || true)"
@@ -103,6 +104,10 @@ if [ -n "$LIVE_USER" ] && [ -n "$LIVE_HOME" ] && [ -f "$AVATAR_SOURCE" ]; then
 
     cp -f "$AVATAR_SOURCE" "$LIVE_HOME/.face"
     chown "$LIVE_UID:$(id -gn "$LIVE_UID")" "$LIVE_HOME/.face" 2>/dev/null || true
+
+    echo "[OK] Galapagos kullanıcı avatarı hazır."
+else
+    echo "[UYARI] Galapagos avatar kaynağı bulunamadı."
 fi
 
 if command -v update-desktop-database >/dev/null 2>&1; then
@@ -113,4 +118,4 @@ if command -v gtk-update-icon-cache >/dev/null 2>&1 && [ -d /usr/share/icons/hic
     gtk-update-icon-cache -f /usr/share/icons/hicolor >/dev/null 2>&1 || true
 fi
 
-echo "[OK] Live uygulama, launcher ve kullanıcı avatar temizliği tamamlandı."
+echo "[OK] Live uygulama ve launcher temizliği tamamlandı."

@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# Clean the live Cinnamon session from desktop applications that are not part
-# of the Galapagos live environment. The installer can install KDE/GNOME
-# packages later when the user selects them in Calamares.
+# Prepare the live Cinnamon environment. Desktop-specific packages selected
+# later in Calamares are not affected by this live-session cleanup.
 
 if [ "$(id -u)" -ne 0 ]; then
     echo "[HATA] Bu script root olarak çalıştırılmalı."
@@ -45,14 +44,7 @@ else
     DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Use-Pty=0 purge -y "${installed[@]}"
 fi
 
-# Remove stale user-level menu caches from the live account.
-if [ -d /home/vboxuser ]; then
-    rm -rf /home/vboxuser/.cache/menus
-    rm -f /home/vboxuser/.config/menus/*.menu 2>/dev/null || true
-    chown -R 1000:1000 /home/vboxuser/.cache /home/vboxuser/.config 2>/dev/null || true
-fi
-
-# Remove developer-oriented launchers from the live application menu.
+# Remove known developer-oriented launchers.
 for desktop_file in \
     /usr/share/applications/yad-icon-browser.desktop \
     /usr/share/applications/kate.desktop \
@@ -66,11 +58,56 @@ do
     rm -f "$desktop_file"
 done
 
-# Also remove any launcher whose visible name still contains "Icon Browser".
+# Remove any remaining launcher whose visible name is exactly "Icon Browser".
 if [ -d /usr/share/applications ]; then
-    grep -ril --include='*.desktop' '^[[:space:]]*Name[^=]*=[[:space:]]*Icon Browser[[:space:]]*
-         /usr/share/applications 2>/dev/null         | while IFS= read -r desktop_file
-          do
-              rm -f "$desktop_file"
-          done
+    while IFS= read -r -d '' desktop_file; do
+        rm -f "$desktop_file"
+    done < <(
+        grep -rilz --include='*.desktop' \
+            -e '^Name[[:space:]]*=[[:space:]]*Icon Browser[[:space:]]*$' \
+            -e '^Name\[[^]]*\][[:space:]]*=[[:space:]]*Icon Browser[[:space:]]*$' \
+            /usr/share/applications 2>/dev/null || true
+    )
 fi
+
+# Remove stale Cinnamon menu caches.
+if [ -d /home/vboxuser ]; then
+    rm -rf /home/vboxuser/.cache/menus
+    rm -f /home/vboxuser/.config/menus/*.menu 2>/dev/null || true
+fi
+
+# Give the live user the Galapagos logo instead of the distro default
+# account picture. AccountsService and .face provide cross-desktop fallbacks.
+AVATAR_SOURCE="/etc/calamares/branding/galapagos/logo.svg"
+ACCOUNT_ICON="/var/lib/AccountsService/icons/vboxuser.svg"
+ACCOUNT_FILE="/var/lib/AccountsService/users/vboxuser"
+
+if [ -f "$AVATAR_SOURCE" ]; then
+    mkdir -p /var/lib/AccountsService/icons /var/lib/AccountsService/users
+    cp -f "$AVATAR_SOURCE" "$ACCOUNT_ICON"
+
+    if [ -f "$ACCOUNT_FILE" ]; then
+        if grep -q '^Icon=' "$ACCOUNT_FILE"; then
+            sed -i "s|^Icon=.*$|Icon=$ACCOUNT_ICON|" "$ACCOUNT_FILE"
+        else
+            printf '\\nIcon=%s\\n' "$ACCOUNT_ICON" >> "$ACCOUNT_FILE"
+        fi
+    else
+        printf '[User]\\nIcon=%s\\n' "$ACCOUNT_ICON" > "$ACCOUNT_FILE"
+    fi
+
+    if [ -d /home/vboxuser ]; then
+        cp -f "$AVATAR_SOURCE" /home/vboxuser/.face
+        chown 1000:1000 /home/vboxuser/.face
+    fi
+fi
+
+if command -v update-desktop-database >/dev/null 2>&1; then
+    update-desktop-database /usr/share/applications >/dev/null 2>&1 || true
+fi
+
+if command -v gtk-update-icon-cache >/dev/null 2>&1 && [ -d /usr/share/icons/hicolor ]; then
+    gtk-update-icon-cache -f /usr/share/icons/hicolor >/dev/null 2>&1 || true
+fi
+
+echo "[OK] Live uygulama, launcher ve kullanıcı avatar temizliği tamamlandı."

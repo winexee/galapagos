@@ -16,6 +16,9 @@ fi
 # çalışır.
 CMDLINE="$(cat /proc/cmdline 2>/dev/null || true)"
 MANUAL="${GALAPAGOS_MANUAL_INSTALL:-0}"
+if [ "${1:-}" = "--manual" ]; then
+    MANUAL=1
+fi
 
 case "$MANUAL:$CMDLINE" in
     1:*)

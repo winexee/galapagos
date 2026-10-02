@@ -78,18 +78,17 @@ if [ -d /home/vboxuser ]; then
 fi
 
 # Use the Galapagos logo for the live user's account avatar.
-# Do not rely on NSS/getent inside the chroot; resolve UID 1000 directly from /etc/passwd.
+# The live account is created by the image/session setup, so do not depend on
+# NSS/getent inside the chroot. The prepared live home is /home/vboxuser.
 AVATAR_SOURCE="/etc/calamares/branding/galapagos/logo.svg"
 if [ ! -f "$AVATAR_SOURCE" ] && [ -f /usr/share/icons/hicolor/scalable/apps/galapagos-installer.svg ]; then
     AVATAR_SOURCE="/usr/share/icons/hicolor/scalable/apps/galapagos-installer.svg"
 fi
 
-LIVE_UID=1000
-LIVE_ENTRY="$(awk -F: -v uid="$LIVE_UID" '$3 == uid { print; exit }' /etc/passwd 2>/dev/null || true)"
-LIVE_USER="$(printf '%s\n' "$LIVE_ENTRY" | cut -d: -f1)"
-LIVE_HOME="$(printf '%s\n' "$LIVE_ENTRY" | cut -d: -f6)"
+LIVE_USER="vboxuser"
+LIVE_HOME="/home/vboxuser"
 
-if [ -n "$LIVE_USER" ] && [ -n "$LIVE_HOME" ] && [ -f "$AVATAR_SOURCE" ]; then
+if [ -f "$AVATAR_SOURCE" ] && [ -d "$LIVE_HOME" ]; then
     mkdir -p /var/lib/AccountsService/icons /var/lib/AccountsService/users
 
     ACCOUNT_ICON="/var/lib/AccountsService/icons/$LIVE_USER.svg"
@@ -108,13 +107,12 @@ if [ -n "$LIVE_USER" ] && [ -n "$LIVE_HOME" ] && [ -f "$AVATAR_SOURCE" ]; then
     fi
 
     cp -f "$AVATAR_SOURCE" "$LIVE_HOME/.face"
-    chown "$LIVE_UID:$LIVE_UID" "$ACCOUNT_ICON" "$LIVE_HOME/.face" 2>/dev/null || true
+    chown 1000:1000 "$ACCOUNT_ICON" "$ACCOUNT_FILE" "$LIVE_HOME/.face" 2>/dev/null || true
 
-    echo "[OK] Galapagos kullanıcı avatarı hazır: $ACCOUNT_ICON"
+    echo "[OK] Galapagos kullanıcı avatarı hazır."
 else
     echo "[UYARI] Galapagos avatarı hazırlanamadı."
     echo "[BİLGİ] Kaynak: $AVATAR_SOURCE"
-    echo "[BİLGİ] Kullanıcı: $LIVE_USER"
     echo "[BİLGİ] Ev dizini: $LIVE_HOME"
 fi
 

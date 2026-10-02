@@ -79,6 +79,10 @@ fi
 
 # Use the Galapagos icon for the live user's account avatar.
 AVATAR_SOURCE="/etc/calamares/branding/galapagos/logo.svg"
+if [ ! -f "$AVATAR_SOURCE" ] && [ -f /usr/share/icons/hicolor/scalable/apps/galapagos-installer.svg ]; then
+    AVATAR_SOURCE="/usr/share/icons/hicolor/scalable/apps/galapagos-installer.svg"
+fi
+
 LIVE_UID=1000
 LIVE_USER="$(getent passwd "$LIVE_UID" | cut -d: -f1 || true)"
 LIVE_HOME="$(getent passwd "$LIVE_UID" | cut -d: -f6 || true)"

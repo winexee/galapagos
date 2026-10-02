@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<defs>
+<linearGradient id="d" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCE7EC"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#10A8E9"/><stop offset=".58" stop-color="#1688E8"/><stop offset="1" stop-color="#2D61D6"/></linearGradient>
+<linearGradient id="t" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#20C8B8"/><stop offset="1" stop-color="#0D9CB1"/></linearGradient>
+<filter id="s" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#112C3B" flood-opacity=".28"/></filter>
+</defs>
+<g filter="url(#s)">
+<rect x="52" y="50" width="408" height="412" rx="66" fill="url(#d)"/>
+<rect x="82" y="80" width="348" height="260" rx="38" fill="#143648"/>
+<rect x="82" y="360" width="348" height="74" rx="26" fill="#C6D2D9"/>
+<circle cx="128" cy="397" r="10" fill="#58AAC7"/><circle cx="164" cy="397" r="10" fill="#7DBBCE"/>
+<path d="M325 109c-55-39-124-31-166 16-41 46-41 114-5 162 36 48 100 69 155 45 46-20 77-63 77-114 0-16-3-32-8-46l-53 22c3 8 4 16 4 24 0 25-14 49-38 61-30 15-68 7-90-18-21-25-23-63-4-90 21-31 61-42 95-27z" fill="url(#b)"/>
+<path d="M219 262c29 4 55-4 77-20 16-11 28-25 37-43 10 10 24 18 45 20-13 32-35 59-63 76-29 17-62 23-95 15z" fill="url(#t)"/>
+<path d="M336 109c-13 7-25 14-36 23-16 12-28 26-37 42l37 15c8-13 19-24 32-32 12-8 26-13 41-15z" fill="#082F5A" opacity=".9"/>
+</g>
+</svg>

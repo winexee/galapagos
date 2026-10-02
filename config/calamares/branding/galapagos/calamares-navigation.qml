@@ -82,7 +82,7 @@ Rectangle {
             Layout.preferredHeight: 42
 
             enabled: ViewManager.nextEnabled
-            visible: ViewManager.backAndNextVisible && !ViewManager.quitVisible
+            visible: ViewManager.backAndNextVisible && ViewManager.quitIcon !== "dialog-ok-apply"
 
             text: "İleri  →"
 
@@ -119,7 +119,7 @@ Rectangle {
             enabled: ViewManager.quitEnabled
             visible: ViewManager.quitVisible
 
-            text: ViewManager.quitVisible ? "Yeniden Başlat" : "İptal"
+            text: ViewManager.quitLabel.replace("&", "")
 
             contentItem: Text {
                 text: cancelButton.text

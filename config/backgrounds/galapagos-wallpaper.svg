@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0A2431"/><stop offset=".55" stop-color="#123E52"/><stop offset="1" stop-color="#1F627C"/></linearGradient>
+<linearGradient id="wave" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#2DAEDF" stop-opacity=".20"/><stop offset="1" stop-color="#67D5E7" stop-opacity=".05"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#12A7E8"/><stop offset=".6" stop-color="#1688E7"/><stop offset="1" stop-color="#2E61D6"/></linearGradient>
+<linearGradient id="t" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#20C8B8"/><stop offset="1" stop-color="#0D9CB1"/></linearGradient>
+</defs>
+<rect width="1920" height="1080" fill="url(#bg)"/>
+<path d="M0 150C420 20 590 350 990 220s550-220 930-30v360c-370-120-640-35-1030 70S430 540 0 700z" fill="url(#wave)"/>
+<path d="M0 630c420-175 700 80 1010-10 360-105 535-250 910-120v350c-330-85-590-10-900 85-400 122-640-80-1020 40z" fill="#55BEDA" fill-opacity=".08"/>
+<g transform="translate(740 280)">
+<rect x="0" y="0" width="440" height="440" rx="76" fill="#FFFFFF" fill-opacity=".06" stroke="#D9F1F6" stroke-opacity=".14" stroke-width="4"/>
+<path d="M286 76c-74-55-168-44-225 22-54 61-52 151-1 212 49 59 136 84 211 52 61-26 102-85 102-151 0-21-4-41-11-61l-69 29c4 10 6 21 6 32 0 37-21 71-55 88-44 22-99 12-131-24-31-35-34-89-7-128 30-43 87-59 135-37z" fill="url(#g)"/>
+<path d="M145 260c39 4 74-6 106-28 20-14 36-34 48-58 13 13 33 24 62 27-15 43-45 80-84 103-40 24-86 31-132 22z" fill="url(#t)"/>
+<path d="M300 76c-16 8-31 18-46 30-21 16-37 34-49 55l49 19c11-18 27-32 45-43 18-10 37-16 57-20z" fill="#082F5A" opacity=".85"/>
+</g>
+<text x="960" y="805" text-anchor="middle" fill="#E9F8FB" font-family="sans-serif" font-size="64" font-weight="700">Galapagos Linux</text>
+<text x="960" y="855" text-anchor="middle" fill="#A9D9E8" font-family="sans-serif" font-size="28">26.04 LTS</text>
+</svg>

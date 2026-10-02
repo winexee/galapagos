@@ -8,31 +8,69 @@ projesidir. Cinnamon, KDE Plasma ve GNOME seçenekleri sunar.
 - config/calamares/ — Calamares ayarları ve Galapagos branding
 - config/scripts/ — Live ortam yardımcı scriptleri
 - config/desktop/ — masaüstü launcher dosyaları
-- scripts/ — ISO build scriptleri
-- packages/ — paket metadata/listeleri
+- scripts/ — ISO build ve doğrulama scriptleri
+
+## Dış önkoşullar (repository dışı girdiler)
+
+Bu repository tek başına reproducible bir rootfs üreticisi değildir.
+`scripts/build-iso.sh` çalışması için şu girdiler dışarıdan hazırlanmış olmalıdır:
+
+- `build/live-root/` (kurulu paketleri ve kernel/initrd dosyalarını içeren hazır live root)
+- `custom-disk/boot/grub/grub.cfg`
+- `custom-disk/boot/grub/loopback.cfg`
+- `custom-disk/EFI/boot/bootx64.efi`
+- ayrıca `custom-disk/EFI/boot/grubx64.efi` ve `custom-disk/EFI/boot/mmx64.efi`
+
+Build scripti bu girdileri açıkça doğrular ve eksikte hata ile durur.
 
 ## ISO build
 
-Gerekli araçlar: mksquashfs, grub-mkrescue, xorriso, rsync, unsquashfs.
+Gerekli araçlar: `mksquashfs`, `grub-mkrescue`, `xorriso`, `rsync`, `unsquashfs`,
+`mount`, `mountpoint`, `sudo`.
 
-Mevcut ISO paketleme adımı önceden hazırlanmış build/live-root ve
-custom-disk girdilerini bekler.
+Repository içindeki Calamares/branding/live script/desktop/icon/wallpaper dosyaları,
+`filesystem.squashfs` üretilmeden önce otomatik olarak `build/live-root` içine kurulur.
 
-    cd ~/galapagos
-    ./scripts/build-iso.sh
+```bash
+cd ~/galapagos
+./scripts/build-iso.sh
+```
+
+## Doğrulama
+
+Ağ erişimi veya paket indirme olmadan hızlı doğrulama:
+
+```bash
+./scripts/validate-repo.sh
+```
+
+Bu komut şunları kontrol eder:
+
+- shell syntax (`bash -n`, `sh -n`)
+- `galapagos-desktop` Python dosyası için AST/compile kontrolü
+- Calamares settings/module/asset path tutarlılığı
+- gerekli scriptlerde executable bit
+- runtime-owned dosyalarda Ubuntu/Kubuntu/Debian branding kalıntısı
+
+Dış girdileri de kontrol etmek için:
+
+```bash
+./scripts/validate-repo.sh --with-external-inputs
+```
 
 ## Calamares
 
-Kurulum seçenekleri: Cinnamon, KDE Plasma, GNOME
+Kurulum seçenekleri: Cinnamon, KDE Plasma, GNOME.
 
-Kurulum türleri: Minimal, Standard
+Kurulum türleri (Minimal/Standard) için paket listelerinin tek kaynak noktası:
+`config/calamares/modules/packagechooser_installtype.conf`
 
 ## Test
 
-ISO önce VirtualBox gibi bir sanal makinede test edilmelidir.
-GRUB, Live oturum, Calamares, kurulum, reboot ve ilk açılış doğrulanmalıdır.
+ISO mutlaka VirtualBox/gerçek makinede ayrıca test edilmelidir:
 
-## Geliştirme durumu
-
-Repository henüz rootfs'ı sıfırdan oluşturan tam reproducible pipeline değildir.
-build/live-root ve custom-disk girdilerinin üretimi sonraki geliştirme adımıdır.
+- UEFI ve BIOS boot
+- GRUB menüsü ve `galapagos.install=1` davranışı
+- Live oturum autostart davranışı
+- Calamares kurulum akışı
+- kurulum sonrası reboot ve ilk açılış

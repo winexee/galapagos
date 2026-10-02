@@ -1,6 +1,5 @@
 #!/bin/sh
-
-set -u
+set -eu
 
 LIVE_MARKER="/cdrom/casper/filesystem.squashfs"
 LOG="/tmp/galapagos-calamares.log"
@@ -32,6 +31,11 @@ esac
 
 if pgrep -x calamares >/dev/null 2>&1; then
     exit 0
+fi
+
+if [ ! -x /usr/bin/calamares ]; then
+    echo "[HATA] /usr/bin/calamares bulunamadı." >> "$LOG"
+    exit 1
 fi
 
 echo "==================================================" >> "$LOG"

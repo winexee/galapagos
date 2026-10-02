@@ -1,5 +1,5 @@
 #!/bin/sh
-set -u
+set -eu
 
 # Only affect the live "Try Galapagos" session.
 if [ ! -f /cdrom/casper/filesystem.squashfs ]; then

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Galapagos Live Branding
+Exec=/usr/local/bin/galapagos-live-branding
+Terminal=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+X-Cinnamon-Autostart-enabled=true

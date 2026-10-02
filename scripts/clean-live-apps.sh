@@ -78,7 +78,7 @@ if [ -d /home/vboxuser ]; then
 fi
 
 # Use the Galapagos icon for the live user's account avatar.
-AVATAR_SOURCE="/etc/calamares/branding/galapagos/icon.png"
+AVATAR_SOURCE="/etc/calamares/branding/galapagos/logo.svg"
 LIVE_UID=1000
 LIVE_USER="$(getent passwd "$LIVE_UID" | cut -d: -f1 || true)"
 LIVE_HOME="$(getent passwd "$LIVE_UID" | cut -d: -f6 || true)"

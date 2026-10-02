@@ -65,3 +65,12 @@ for desktop_file in \
 do
     rm -f "$desktop_file"
 done
+
+# Also remove any launcher whose visible name still contains "Icon Browser".
+if [ -d /usr/share/applications ]; then
+    grep -ril --include='*.desktop' '^[[:space:]]*Name[^=]*=[[:space:]]*Icon Browser[[:space:]]*
+         /usr/share/applications 2>/dev/null         | while IFS= read -r desktop_file
+          do
+              rm -f "$desktop_file"
+          done
+fi

@@ -77,24 +77,25 @@ if [ -d /home/vboxuser ]; then
     rm -f /home/vboxuser/.config/menus/*.menu 2>/dev/null || true
 fi
 
-# Use the Galapagos icon for the live user's account avatar.
+# Use the Galapagos logo for the live user's account avatar.
+# Do not rely on NSS/getent inside the chroot; resolve UID 1000 directly from /etc/passwd.
 AVATAR_SOURCE="/etc/calamares/branding/galapagos/logo.svg"
 if [ ! -f "$AVATAR_SOURCE" ] && [ -f /usr/share/icons/hicolor/scalable/apps/galapagos-installer.svg ]; then
     AVATAR_SOURCE="/usr/share/icons/hicolor/scalable/apps/galapagos-installer.svg"
 fi
 
 LIVE_UID=1000
-LIVE_USER="$(getent passwd "$LIVE_UID" | cut -d: -f1 || true)"
-LIVE_HOME="$(getent passwd "$LIVE_UID" | cut -d: -f6 || true)"
+LIVE_ENTRY="$(awk -F: -v uid="$LIVE_UID" '$3 == uid { print; exit }' /etc/passwd 2>/dev/null || true)"
+LIVE_USER="$(printf '%s\n' "$LIVE_ENTRY" | cut -d: -f1)"
+LIVE_HOME="$(printf '%s\n' "$LIVE_ENTRY" | cut -d: -f6)"
 
 if [ -n "$LIVE_USER" ] && [ -n "$LIVE_HOME" ] && [ -f "$AVATAR_SOURCE" ]; then
     mkdir -p /var/lib/AccountsService/icons /var/lib/AccountsService/users
 
-    ACCOUNT_ICON="/var/lib/AccountsService/icons/$LIVE_USER.png"
+    ACCOUNT_ICON="/var/lib/AccountsService/icons/$LIVE_USER.svg"
     ACCOUNT_FILE="/var/lib/AccountsService/users/$LIVE_USER"
 
     cp -f "$AVATAR_SOURCE" "$ACCOUNT_ICON"
-    chown "$LIVE_UID:$(id -gn "$LIVE_UID")" "$ACCOUNT_ICON" 2>/dev/null || true
 
     if [ -f "$ACCOUNT_FILE" ]; then
         if grep -q '^Icon=' "$ACCOUNT_FILE"; then
@@ -107,11 +108,14 @@ if [ -n "$LIVE_USER" ] && [ -n "$LIVE_HOME" ] && [ -f "$AVATAR_SOURCE" ]; then
     fi
 
     cp -f "$AVATAR_SOURCE" "$LIVE_HOME/.face"
-    chown "$LIVE_UID:$(id -gn "$LIVE_UID")" "$LIVE_HOME/.face" 2>/dev/null || true
+    chown "$LIVE_UID:$LIVE_UID" "$ACCOUNT_ICON" "$LIVE_HOME/.face" 2>/dev/null || true
 
-    echo "[OK] Galapagos kullanıcı avatarı hazır."
+    echo "[OK] Galapagos kullanıcı avatarı hazır: $ACCOUNT_ICON"
 else
-    echo "[UYARI] Galapagos avatar kaynağı bulunamadı."
+    echo "[UYARI] Galapagos avatarı hazırlanamadı."
+    echo "[BİLGİ] Kaynak: $AVATAR_SOURCE"
+    echo "[BİLGİ] Kullanıcı: $LIVE_USER"
+    echo "[BİLGİ] Ev dizini: $LIVE_HOME"
 fi
 
 if command -v update-desktop-database >/dev/null 2>&1; then
